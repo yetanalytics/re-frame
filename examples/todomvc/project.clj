@@ -12,13 +12,15 @@
 
   :hooks [leiningen.cljsbuild]
 
-  :profiles {:dev  {:cljsbuild
-                    {:builds {:client {:compiler {:asset-path           "js"
-                                                  :optimizations        :none
-                                                  :source-map           true
-                                                  :source-map-timestamp true
-                                                  :main                 "todomvc.core"}
-                                       :figwheel {:on-jsload "todomvc.core/main"}}}}}
+  :profiles {:dev  {:dependencies [[day8.re-frame/trace "0.1.7-SNAPSHOT"]]
+                    :cljsbuild    {:builds {:client {:compiler {:asset-path           "js"
+                                                                :optimizations        :none
+                                                                :source-map           true
+                                                                :closure-defines      {"re_frame.trace.trace_enabled_QMARK_" true}
+                                                                :preloads             [day8.re-frame.trace.preload]
+                                                                :source-map-timestamp true
+                                                                :main                 "todomvc.core"}
+                                                     :figwheel {:on-jsload "todomvc.core/main"}}}}}
 
              :prod {:cljsbuild
                     {:builds {:client {:compiler {:optimizations :advanced
