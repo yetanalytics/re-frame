@@ -96,11 +96,17 @@
 
 (defn todo-app
   []
-  [:div
-   [:section#todoapp
-    [task-entry]
-    (when (seq @(subscribe [:todos]))
-      [task-list])
-    [footer-controls]]
-   [:footer#info
-    [:p "Double-click to edit a todo"]]])
+  (let [other-panel? @(subscribe [:other-panel?])]
+    (if other-panel?
+      [:div
+       [:h2 "Other panel"]
+       [:button {:on-click #(dispatch [:other-panel?])} "Switch Panel"]]
+      [:div
+       [:button {:on-click #(dispatch [:other-panel?])} "Switch Panel"]
+       [:section#todoapp
+        [task-entry]
+        (when (seq @(subscribe [:todos]))
+          [task-list])
+        [footer-controls]]
+       [:footer#info
+        [:p "Double-click to edit a todo"]]])))

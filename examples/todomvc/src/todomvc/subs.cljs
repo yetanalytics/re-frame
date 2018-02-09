@@ -162,3 +162,8 @@
   :<- [:completed-count]
   (fn [[todos completed] _]
     [(- (count todos) completed) completed]))
+
+(reg-sub
+  :other-panel?
+  (fn [db _]
+    (:other-panel? db)))

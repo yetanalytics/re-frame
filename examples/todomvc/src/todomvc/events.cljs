@@ -189,3 +189,8 @@
       (reduce #(assoc-in %1 [%2 :done] new-done)
               todos
               (keys todos)))))
+
+(reg-event-db
+  :other-panel?
+  (fn [db _]
+    (update db :other-panel? not)))
