@@ -13,7 +13,7 @@
 
   :hooks [leiningen.cljsbuild]
 
-  :profiles {:dev  {:dependencies [[day8.re-frame/trace "0.1.19-SNAPSHOT"]]
+  :profiles {:dev  {:dependencies [[day8.re-frame/trace "0.1.20-SNAPSHOT"]]
                     :cljsbuild
                     {:builds {:client {:compiler {:asset-path           "js"
                                                   :optimizations        :none
