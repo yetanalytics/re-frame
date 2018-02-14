@@ -18,4 +18,4 @@
                  cljs.core/*print-fn*      (fn [x#] (.append sb# x#))]
          ~@body)
        (finally
-         #_(trace/merge-trace! {:tags {:code (cljs.core/str sb#)}})))))
+         (trace/merge-trace! {:tags {:code (cljs.core/str sb#)}})))))

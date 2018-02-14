@@ -148,8 +148,10 @@
   ;; put into `:todos` path, and not the entire `db`.
   ;; So, a path interceptor makes the event handler act more like clojure's `update-in`
   (fn [todos [text]]   ;; because of trim-v,  the 2nd parameter is NOT [_ text]
-    (let [id (allocate-next-id todos)]
-      (assoc todos id {:id id :title text :done false}))))
+    (trace-exec
+      (dbgn
+        (let [id (allocate-next-id todos)]
+          (assoc todos id {:id id :title text :done false}))))))
 
 
 (reg-event-db
