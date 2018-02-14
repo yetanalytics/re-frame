@@ -4,7 +4,9 @@
                  [reagent "0.7.0"]
                  [re-frame "0.10.1"]
                  [binaryage/devtools "0.9.4"]
-                 [secretary "1.2.3"]]
+                 [secretary "1.2.3"]
+                 [philoskim/debux "0.4.2"]
+                 [day8.re-frame/trace "0.1.22-SNAPSHOT"]]
 
 
   :plugins [[lein-cljsbuild "1.1.5"]
@@ -16,6 +18,11 @@
                     {:builds {:client {:compiler {:asset-path           "js"
                                                   :optimizations        :none
                                                   :source-map           true
+                                                  :closure-defines      {"re_frame.trace.trace_enabled_QMARK_" true
+                                                                         "day8.re_frame.trace.debug_QMARK_"    true
+
+                                                                         }
+                                                  :preloads             [day8.re-frame.trace.preload]
                                                   :source-map-timestamp true
                                                   :main                 "todomvc.core"}
                                        :figwheel {:on-jsload "todomvc.core/main"}}}}}
@@ -26,11 +33,11 @@
                                                   :pretty-print  false}}}}}}
 
   :figwheel {:server-port 3450
-             :repl        true}
+             :repl        false}
 
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
-  :cljsbuild {:builds {:client {:source-paths ["src" "../../src"]
+  :cljsbuild {:builds {:client {:source-paths ["src" "../../src" "checkouts/re-frame-trace/src"]
                                 :compiler     {:output-dir "resources/public/js"
                                                :output-to  "resources/public/js/client.js"}}}})
