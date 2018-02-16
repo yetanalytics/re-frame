@@ -1,10 +1,11 @@
-(ns todomvc.dbg
-  (:require
-            [re-frame.trace :as trace :include-macros true]
-            ))
+(ns todomvc.trace-exec
+  (:require [re-frame.trace :as trace :include-macros true]))
 
 
 ;;
+
+
+
 
 (defmacro trace-exec
   "Evaluates exprs in a context in which *print-fn* is bound to .append
@@ -18,4 +19,10 @@
                  cljs.core/*print-fn*      (fn [x#] (.append sb# x#))]
          ~@body)
        (finally
-         (trace/merge-trace! {:tags {:code (cljs.core/str sb#)}})))))
+         (let [code# (get-in trace/*current-trace* [:tags :code-lines] [])]
+           (trace/merge-trace! {:tags {:code-lines (conj code# (cljs.core/str sb#))}}))))))
+
+;; pprint-code
+;; fipp - code
+;; cljfmt
+;; parinfer?
