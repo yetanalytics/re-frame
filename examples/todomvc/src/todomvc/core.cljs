@@ -55,3 +55,5 @@
   (reagent/render [todomvc.views/todo-app]
                   (.getElementById js/document "app")))
 
+(let [todos nil]
+  (->> (vals todos) (filter :done) (map :id) (reduce dissoc todos)))

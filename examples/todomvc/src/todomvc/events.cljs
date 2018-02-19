@@ -91,49 +91,49 @@
 ;; To fully understand this advanced topic, you'll have to read the tutorials
 ;; and look at the bottom of `db.cljs` for the `:local-store-todos` cofx
 ;; registration.
-(reg-event-fx                 ;; part of the re-frame API
-  :initialise-db              ;; event id being handled
+(reg-event-fx ;; part of the re-frame API
+  :initialise-db ;; event id being handled
 
   ;; the interceptor chain (a vector of interceptors)
-  [(inject-cofx :local-store-todos)  ;; gets todos from localstore, and puts into coeffects arg
-   check-spec-interceptor]           ;; after the event handler runs, check app-db matches Spec
+  [(inject-cofx :local-store-todos) ;; gets todos from localstore, and puts into coeffects arg
+   check-spec-interceptor] ;; after the event handler runs, check app-db matches Spec
 
   ;; the event handler (function) being registered
-  (fn [{:keys [db local-store-todos]} _]                    ;; take 2 vals from coeffects. Ignore event vector itself.
+  (fn [{:keys [db local-store-todos]} _] ;; take 2 vals from coeffects. Ignore event vector itself.
     (dbgn
-      {:db (assoc default-db :todos local-store-todos)})))     ;; all hail the new state
+      {:db (assoc default-db :todos local-store-todos)}))) ;; all hail the new state
 
 
 ;; usage:  (dispatch [:set-showing  :active])
 ;; This event is dispatched when the user clicks on one of the 3
 ;; filter buttons at the bottom of the display.
-(reg-event-db      ;; part of the re-frame API
-  :set-showing     ;; event-id
+(reg-event-db ;; part of the re-frame API
+  :set-showing ;; event-id
   [check-spec-interceptor]
-  (fn [db [_ new-filter-kw]]     ;; new-filter-kw is one of :all, :active or :done
+  (fn [db [_ new-filter-kw]] ;; new-filter-kw is one of :all, :active or :done
     (assoc db :showing new-filter-kw)))
 
 ;; NOTE: here is a rewrite of the event handler above using `path` and `trim-v`
 ;; These interceptors are useful, but they are an advanced topic.
 ;; It will be illuminating if you compare this rewrite with the original above.
 #_(reg-event-db
-  :set-showing
+    :set-showing
 
-  ;; this chain of 3 interceptors wrap the handler. Note use of `path` and `trim-v`
-  [check-spec-interceptor (path :showing) trim-v]
+    ;; this chain of 3 interceptors wrap the handler. Note use of `path` and `trim-v`
+    [check-spec-interceptor (path :showing) trim-v]
 
-  ;; The event handler
-  ;; Because of the `path` interceptor above, the 1st parameter to
-  ;; the handler below won't be the entire 'db', and instead will
-  ;; be the value at the path `[:showing]` within db.
-  ;; Also, the use of the `trim-v` interceptor means we can omit
-  ;; the leading underscore from the 2nd parameter (event vector).
-  (fn [old-keyword [new-filter-kw]]
-    new-filter-kw))                  ;; return new state for the path
+    ;; The event handler
+    ;; Because of the `path` interceptor above, the 1st parameter to
+    ;; the handler below won't be the entire 'db', and instead will
+    ;; be the value at the path `[:showing]` within db.
+    ;; Also, the use of the `trim-v` interceptor means we can omit
+    ;; the leading underscore from the 2nd parameter (event vector).
+    (fn [old-keyword [new-filter-kw]]
+      new-filter-kw)) ;; return new state for the path
 
 
 ;; usage:  (dispatch [:add-todo  "a description string"])
-(reg-event-db                     ;; given the text, create a new todo
+(reg-event-db ;; given the text, create a new todo
   :add-todo
 
   ;; The standard set of interceptors, defined above, which we
@@ -162,7 +162,10 @@
   (fn [todos [id]]
 
     (d/dbgn
-      (update-in todos [id :done] not))))
+      (cond-> todos
+              true (update-in [id :done] not)
+              (pos? (count todos)) identity
+              false identity))))
 
 ;; t-fn macro
 ;; trace code and results as data
@@ -202,7 +205,6 @@
   :clear-completed
   todo-interceptors
   (fn [todos _]
-
     (d/dbgn
       (->> (vals todos) ;; find the ids of all todos where :done is true
            (filter :done)

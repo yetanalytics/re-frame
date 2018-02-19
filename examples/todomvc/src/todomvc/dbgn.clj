@@ -260,6 +260,8 @@
      (try
        (if (or (nil? condition#) condition#)
          (let [title# (str "\ndbgn: " (ut/truncate (pr-str '~form)) " =>")]
+           (trace/merge-trace! {:tags {:f1 (pr-str '~form)
+                                       :form   '~(remove-d form 'todomvc.dbgn/d)}})
            (println title#)
            ~(-> (if (ut/include-recur? form)
                   (sk/insert-o-skip-for-recur form &env)

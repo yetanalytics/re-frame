@@ -6,11 +6,13 @@
                  [binaryage/devtools "0.9.4"]
                  [secretary "1.2.3"]
                  [philoskim/debux "0.4.2"]
-                 [day8.re-frame/trace "0.1.22-SNAPSHOT"]]
+                 [day8.re-frame/trace "0.1.22-SNAPSHOT"]
+                 ]
 
 
   :plugins [[lein-cljsbuild "1.1.5"]
-            [lein-figwheel  "0.5.13"]]
+            [lein-figwheel  "0.5.13"]
+            [lein-cljfmt "0.5.7"]]
 
   :hooks [leiningen.cljsbuild]
 
