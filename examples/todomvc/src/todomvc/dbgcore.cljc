@@ -1,5 +1,6 @@
 (ns todomvc.dbgcore
-  #?(:cljs (:require-macros [debux.dbg :as dbg]
+  #?(:cljs (:require-macros
+             [todomvc.dbg :as dbg]
              [todomvc.dbgn :as dbgn]
              [debux.cs.clog :as clog]
              [debux.cs.clogn :as clogn]
@@ -14,9 +15,9 @@
 
 
 ;;;; debugging APIs
-;(defmacro dbg [form & opts]
-;  (let [opts' (ut/parse-opts opts)]
-;    `(debux.dbg/dbg ~form ~opts')))
+(defmacro dbg [form & opts]
+  (let [opts' (ut/parse-opts opts)]
+    `(todomvc.dbg/dbg ~form ~opts')))
 
 (defmacro dbgn [form & opts]
   (let [opts' (ut/parse-opts opts)]

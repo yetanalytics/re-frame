@@ -5,7 +5,8 @@
                            after debug]]
     [cljs.spec.alpha :as s]
     [todomvc.dbgcore :as d :refer-macros [dbgn]])
-  (:require-macros [todomvc.trace-exec :refer [trace-exec]]))
+  (:require-macros [todomvc.trace-exec :refer [trace-exec]]
+                   [todomvc.dbgn :refer [add-meta]]))
 
 
 ;; -- Interceptors --------------------------------------------------------------
@@ -160,12 +161,21 @@
   :toggle-done
   todo-interceptors
   (fn [todos [id]]
-
+    #_(println (meta (add-meta [(-> (+ 2 3)
+                                    )])))
+    (println "LIST" '(d/dbgn
+                       (-> todos
+                           (update-in [id :done] not)
+                           (assoc-in [id :priority] 1)
+                           identity
+                           )))
+    (js/console.log "---------------")
     (d/dbgn
-      (cond-> todos
-              true (update-in [id :done] not)
-              (pos? (count todos)) identity
-              false identity))))
+      (-> todos
+          (update-in [id :done] not)
+          (assoc-in [id :priority] 1)
+          identity
+          ))))
 
 ;; t-fn macro
 ;; trace code and results as data

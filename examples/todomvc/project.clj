@@ -6,7 +6,7 @@
                  [binaryage/devtools "0.9.4"]
                  [secretary "1.2.3"]
                  [philoskim/debux "0.4.2"]
-                 [day8.re-frame/trace "0.1.22-SNAPSHOT"]
+                 [day8.re-frame/re-frame-10x "0.2.1-SNAPSHOT"]
                  ]
 
 
@@ -21,10 +21,8 @@
                                                   :optimizations        :none
                                                   :source-map           true
                                                   :closure-defines      {"re_frame.trace.trace_enabled_QMARK_" true
-                                                                         "day8.re_frame.trace.debug_QMARK_"    true
-
-                                                                         }
-                                                  :preloads             [day8.re-frame.trace.preload]
+                                                                         "day8.re_frame_10x.debug_QMARK_"    true}
+                                                  :preloads             [day8.re-frame-10x.preload]
                                                   :source-map-timestamp true
                                                   :main                 "todomvc.core"}
                                        :figwheel {:on-jsload "todomvc.core/main"}}}}}

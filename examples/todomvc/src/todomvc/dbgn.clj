@@ -218,10 +218,10 @@
          result# ~form
          result# (ut/take-n-if-seq n# result#)
          code#   (get-in trace/*current-trace* [:tags :code] [])]
-     (trace/merge-trace! {:tags {:code (conj code# {:form '~(remove-d form 'todomvc.dbgn/d) :result result#})}})
-     #_(ut/print-form-with-indent (ut/form-header '~(remove-d form 'debux.dbgn/d) msg#)
+     #_(trace/merge-trace! {:tags {:code (conj code# {:form '~(remove-d form 'todomvc.dbgn/d) :result result#})}})
+     (ut/print-form-with-indent (ut/form-header '~(remove-d form 'debux.dbgn/d) msg#)
                                 @ut/indent-level*)
-     #_(ut/pprint-result-with-indent result# @ut/indent-level*)
+     (ut/pprint-result-with-indent result# @ut/indent-level*)
      result#))
 
 
@@ -248,6 +248,14 @@
         :else
         (recur (z/next loc))))))
 
+(defmacro add-meta [expr]
+  (let [namespace      {:namespace (name cljs.analyzer/*cljs-ns*)}
+        source-details (meta &form)]
+    `(with-meta ~expr '~(merge namespace source-details))))
+
+(defmacro make-thing [obj]
+  (let [f *file*]
+    (with-meta obj (assoc (meta &form) :file f))))
 
 ;;; dbgn
 (defmacro dbgn
@@ -257,9 +265,11 @@
                                (dissoc opts :style :js :once)
                                opts)
          condition# ~condition]
+     ;(println "META1" '~&form)
      (try
        (if (or (nil? condition#) condition#)
          (let [title# (str "\ndbgn: " (ut/truncate (pr-str '~form)) " =>")]
+           ;(println "FORM" (meta '~&form))
            (trace/merge-trace! {:tags {:f1 (pr-str '~form)
                                        :form   '~(remove-d form 'todomvc.dbgn/d)}})
            (println title#)

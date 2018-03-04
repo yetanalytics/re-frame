@@ -235,3 +235,6 @@
   [& args]
   (console :warn  "re-frame:  \"register-sub\" is deprecated. Use \"reg-sub-raw\" (look for registration of" (str (first args)) ")")
   (apply reg-sub-raw args))
+
+(defmacro t-fn [fn-params]
+  (dbgn fn-params re-frame.trace/trace-code))
