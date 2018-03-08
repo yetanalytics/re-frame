@@ -4,9 +4,9 @@
     [re-frame.core :refer [reg-event-db reg-event-fx inject-cofx path trim-v
                            after debug]]
     [cljs.spec.alpha :as s]
-    [todomvc.dbgcore :as d :refer-macros [dbgn]])
-  (:require-macros [todomvc.trace-exec :refer [trace-exec]]
-                   [todomvc.dbgn :refer [add-meta]]))
+    [debux.cs.core :as d :refer-macros [dbgn fntrace]])
+  #_(:require-macros [todomvc.trace-exec :refer [trace-exec]]
+      [todomvc.dbgn :refer [add-meta]]))
 
 
 ;; -- Interceptors --------------------------------------------------------------
@@ -61,7 +61,7 @@
 (def todo-interceptors [check-spec-interceptor ;; ensure the spec is still valid  (after)
                         (path :todos) ;; 1st param to handler will be the value from this path within db
                         ->local-store ;; write todos to localstore  (after)
-                        (when ^boolean js/goog.DEBUG debug) ;; look at the js browser console for debug logs
+                        ;(when ^boolean js/goog.DEBUG debug) ;; look at the js browser console for debug logs
                         trim-v]) ;; removes first (event id) element from the event vec
 
 
@@ -100,9 +100,10 @@
    check-spec-interceptor] ;; after the event handler runs, check app-db matches Spec
 
   ;; the event handler (function) being registered
-  (fn [{:keys [db local-store-todos]} _] ;; take 2 vals from coeffects. Ignore event vector itself.
-    (dbgn
-      {:db (assoc default-db :todos local-store-todos)}))) ;; all hail the new state
+  (fntrace [{:keys [db local-store-todos]} _] ;; take 2 vals from coeffects. Ignore event vector itself.
+
+
+    {:db (assoc default-db :todos local-store-todos)})) ;; all hail the new state
 
 
 ;; usage:  (dispatch [:set-showing  :active])
@@ -111,7 +112,7 @@
 (reg-event-db ;; part of the re-frame API
   :set-showing ;; event-id
   [check-spec-interceptor]
-  (fn [db [_ new-filter-kw]] ;; new-filter-kw is one of :all, :active or :done
+  (fntrace [db [_ new-filter-kw]] ;; new-filter-kw is one of :all, :active or :done
     (assoc db :showing new-filter-kw)))
 
 ;; NOTE: here is a rewrite of the event handler above using `path` and `trim-v`
@@ -149,33 +150,24 @@
   ;; And, further, it means the event handler returns just the value to be
   ;; put into `:todos` path, and not the entire `db`.
   ;; So, a path interceptor makes the event handler act more like clojure's `update-in`
-  (fn [todos [text]] ;; because of trim-v,  the 2nd parameter is NOT [_ text]
-
-    (d/dbgn
-      (let [id (allocate-next-id todos)]
-        (assoc todos id {:id id :title text :done false})))))
+  (fntrace [todos [text]] ;; because of trim-v,  the 2nd parameter is NOT [_ text]
+    (let [id (allocate-next-id todos)]
+      (assoc todos id {:id id :title text :done false}))))
 
 
 
 (reg-event-db
   :toggle-done
   todo-interceptors
-  (fn [todos [id]]
+  (fntrace [todos [id]]
     #_(println (meta (add-meta [(-> (+ 2 3)
                                     )])))
-    (println "LIST" '(d/dbgn
-                       (-> todos
-                           (update-in [id :done] not)
-                           (assoc-in [id :priority] 1)
-                           identity
-                           )))
-    (js/console.log "---------------")
-    (d/dbgn
-      (-> todos
-          (update-in [id :done] not)
-          (assoc-in [id :priority] 1)
-          identity
-          ))))
+
+
+             (-> todos
+                 (update-in [id :done] not)
+                 identity
+                 )))
 
 ;; t-fn macro
 ;; trace code and results as data
@@ -192,10 +184,9 @@
 (reg-event-db
   :save
   todo-interceptors
-  (fn [todos [id title]]
+  (fntrace [todos [id title]]
 
-    (d/dbgn
-      (assoc-in todos [id :title] title))))
+    (assoc-in todos [id :title] title)))
 
 
 
@@ -203,22 +194,23 @@
 (reg-event-db
   :delete-todo
   todo-interceptors
-  (fn [todos [id]]
+  (fntrace [todos [id]]
 
-    (d/dbgn
-      (dissoc todos id))
-    todos))
+
+
+    (dissoc todos id)))
 
 
 
 (reg-event-db
   :clear-completed
   todo-interceptors
-  (fn [todos _]
-    (d/dbgn
+  (fntrace [todos _]
+
+    (do
       (->> (vals todos) ;; find the ids of all todos where :done is true
            (filter :done)
-           (map :id)
+           (map (fn [x] (get x :id)))
            (reduce dissoc todos))))) ;; now delete these ids
 
 
@@ -226,10 +218,9 @@
 (reg-event-db
   :complete-all-toggle
   todo-interceptors
-  (fn [todos _]
+  (fntrace [todos _]
 
-    (d/dbgn
-      (let [new-done (not-every? :done (vals todos))] ;; work out: toggle true or false?
-        (reduce #(assoc-in %1 [%2 :done] new-done)
-                todos
-                (keys todos))))))
+    (let [new-done (not-every? :done (vals todos))] ;; work out: toggle true or false?
+      (reduce #(assoc-in %1 [%2 :done] new-done)
+              todos
+              (keys todos)))))

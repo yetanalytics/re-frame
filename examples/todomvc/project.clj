@@ -5,7 +5,7 @@
                  [re-frame "0.10.1"]
                  [binaryage/devtools "0.9.4"]
                  [secretary "1.2.3"]
-                 [philoskim/debux "0.4.2"]
+                 [day8.re-frame/debux "0.5.0-SNAPSHOT"]
                  [day8.re-frame/re-frame-10x "0.2.1-SNAPSHOT"]
                  ]
 
@@ -24,6 +24,7 @@
                                                                          "day8.re_frame_10x.debug_QMARK_"    true}
                                                   :preloads             [day8.re-frame-10x.preload]
                                                   :source-map-timestamp true
+                                                  :compiler-stats       true
                                                   :main                 "todomvc.core"}
                                        :figwheel {:on-jsload "todomvc.core/main"}}}}}
 
@@ -33,6 +34,7 @@
                                                   :pretty-print  false}}}}}}
 
   :figwheel {:server-port 3450
+             :reload-clj-files true
              :repl        false}
 
 
