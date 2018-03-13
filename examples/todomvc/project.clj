@@ -11,7 +11,7 @@
 
 
   :plugins [[lein-cljsbuild "1.1.5"]
-            [lein-figwheel  "0.5.13"]
+            [lein-figwheel  "0.5.16-SNAPSHOT"]
             [lein-cljfmt "0.5.7"]]
 
   :hooks [leiningen.cljsbuild]
@@ -21,6 +21,7 @@
                                                   :optimizations        :none
                                                   :source-map           true
                                                   :closure-defines      {"re_frame.trace.trace_enabled_QMARK_" true
+                                                                         "debux.cs.core.trace_enabled_QMARK_" true
                                                                          "day8.re_frame_10x.debug_QMARK_"    true}
                                                   :preloads             [day8.re-frame-10x.preload]
                                                   :source-map-timestamp true
@@ -40,6 +41,6 @@
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
-  :cljsbuild {:builds {:client {:source-paths ["src" "../../src" "checkouts/re-frame-trace/src"]
+  :cljsbuild {:builds {:client {:source-paths ["src" "checkouts/re-frame-trace/src"]
                                 :compiler     {:output-dir "resources/public/js"
                                                :output-to  "resources/public/js/client.js"}}}})
